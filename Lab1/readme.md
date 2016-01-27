@@ -42,7 +42,7 @@ vim simple.c
 :bnext
 ```
 now I have two files open in the session, simple.c and simple.h, divided vertically:
-![screenshot of vim](/split.png)
+![screenshot of vim](http://i68.tinypic.com/2l97i14.png)
 <hr/>
 
 #### Question 3
