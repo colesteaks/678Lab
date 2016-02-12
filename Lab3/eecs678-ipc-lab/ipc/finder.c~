@@ -54,21 +54,26 @@ int main(int argc, char *argv[])
   }
   if (pid_1 == 0) {
   	/*close all pipes*/
-  	 close(pipefd[0]);
+  	 //close(pipefd[0]);
+    //close(pipefd[1]);
+    //close(pipefd2[1]);
+    //close(pipefd2[0]);
+    //close(pipefd3[0]);
+    //close(pipefd3[1]);
+    /* First Child */
+    char cmdbuf[BSIZE];
+    bzero(cmdbuf, BSIZE);
+    sprintf(cmdbuf, "%s %s -name \'*\'.[ch]", FIND_EXEC, argv[1]);
+    
+	 //duplicate the stdout fileno file descriptor into the write end of the first pipe    
+    dup2(pipefd[1], STDOUT_FILENO);
+    
+    close(pipefd[0]);
     close(pipefd[1]);
     close(pipefd2[1]);
     close(pipefd2[0]);
     close(pipefd3[0]);
     close(pipefd3[1]);
-    /* First Child */
-    char cmdbuf[BSIZE];
-    bzero(cmdbuf, BSIZE);
-    sprintf(cmdbuf, "%s %s -name \'*\'.[ch]", FIND_EXEC, argv[1]);
-    printf("%s", cmdbuf);
-	 //duplicate the stdout fileno file descriptor into the write end of the first pipe    
-    dup2(pipefd[1], STDOUT_FILENO);
-    //close(pipefd[1]);
-    
     if((execl(BASH_EXEC, BASH_EXEC, "-c", cmdbuf, (char*) 0))<0) {
 		fprintf(stderr, "\nError executing find. ERROR#%d\n", errno);    
     }
@@ -84,23 +89,34 @@ int main(int argc, char *argv[])
 	exit(EXIT_FAILURE);  
   }
   if (pid_2 == 0) {
-  	 close(pipefd[0]);
+  	 //close(pipefd[0]);
+   // close(pipefd[1]);
+    //close(pipefd2[1]);
+   // close(pipefd2[0]);
+    //close(pipefd3[0]);
+    //close(pipefd3[1]);
+    /* Second Child */
+    
+    //close(pipefd[0]);
+
+    char cmdbuf[BSIZE];
+    bzero(cmdbuf, BSIZE);
+    
+	 dup2(pipefd[0], STDIN_FILENO);    
+   
+    
+    sprintf(cmdbuf, "%s %s -c %s", XARGS_EXEC, GREP_EXEC, argv[2]);
+    printf("\nin the second process!!!\n");
+    printf(cmdbuf);
+    dup2(pipefd2[1], STDOUT_FILENO);
+
+    
+    close(pipefd[0]);
     close(pipefd[1]);
     close(pipefd2[1]);
     close(pipefd2[0]);
     close(pipefd3[0]);
     close(pipefd3[1]);
-    /* Second Child */
-    dup2(pipefd[0], STDIN_FILENO);
-    //close(pipefd[0]);
-    
-    char cmdbuf[BSIZE];
-    bzero(cmdbuf, BSIZE);
-    
-    sprintf(cmdbuf, "%s %s -c %s", XARGS_EXEC, GREP_EXEC, argv[2]);
-    printf("\nin the second process!!!\n");
-    dup2(pipefd2[1], STDOUT_FILENO);
-    //close(pipefd2[1]);
     
     if((execl(BASH_EXEC, BASH_EXEC, "-c", cmdbuf, (char*) 0))<0) {
 		fprintf(stderr, "\nError executing grep. ERROR#%d\n", errno);    
@@ -117,25 +133,33 @@ int main(int argc, char *argv[])
 	exit(EXIT_FAILURE);  
   }
   if (pid_3 == 0) {
-  	 close(pipefd[0]);
-    close(pipefd[1]);
-    close(pipefd2[1]);
-    close(pipefd2[0]);
-    close(pipefd3[0]);
-    close(pipefd3[1]);
+  	//close(pipefd[0]);
+   // close(pipefd[1]);
+    //close(pipefd2[1]);
+   // close(pipefd2[0]);
+   // close(pipefd3[0]);
+   // close(pipefd3[1]);
+    
     /* Third Child */
-    dup2(pipefd2[0], STDIN_FILENO);
-    //close(pipefd2[0]);
     
     char cmdbuf[BSIZE];
     bzero(cmdbuf, BSIZE);
     
+	 dup2(pipefd2[0], STDIN_FILENO);    
+    close(pipefd2[0]);
     sprintf(cmdbuf, "%s -t : +1.0 -2.0 --numeric --reverse", SORT_EXEC);
     
     printf("\nin the third process!!!\n");
     
     dup2(pipefd3[1], STDOUT_FILENO);
-    //close(pipefd3[1]);
+    close(pipefd3[1]);
+    
+	 close(pipefd[0]);
+    close(pipefd[1]);
+    close(pipefd2[1]);
+    close(pipefd2[0]);
+    close(pipefd3[0]);
+    close(pipefd3[1]);    
     
     if((execl(BASH_EXEC, BASH_EXEC, "-c", cmdbuf, (char*) 0))<0) {
 		fprintf(stderr, "\nError executing grep. ERROR#%d\n", errno);    
@@ -158,29 +182,38 @@ int main(int argc, char *argv[])
     close(pipefd2[1]);
     close(pipefd2[0]);
     close(pipefd3[0]);
-    close(pipefd3[1]);
-    
-    dup2(pipefd3[0], STDIN_FILENO);
-	 //close(pipefd3[0]);    
+  
     
     char cmdbuf[BSIZE];
     bzero(cmdbuf, BSIZE);
     
+	 dup2(pipefd3[0], STDIN_FILENO);    
+    close(pipefd3[0]);
+    
     sprintf(cmdbuf, "%s --lines=%s", HEAD_EXEC, argv[3]);
-    printf("%s", cmdbuf);
+    printf("\nin the fourth process!!!\n");
+    
+	 close(pipefd[0]);
+    close(pipefd[1]);
+    close(pipefd2[0]);
+    close(pipefd2[1]);
+    close(pipefd3[1]);
+    close(pipefd3[0]);    
+    
     if((execl(BASH_EXEC, BASH_EXEC, "-c", cmdbuf, (char*) 0))<0) {
 		fprintf(stderr, "\nError executing grep. ERROR#%d\n", errno);    
     }
     
-	 //execl(BASH_EXEC, BASH_EXEC, "-c", cmdbuf, (char*) 0);    
     
+    exit(0);
+  }
+  
     close(pipefd[0]);
     close(pipefd[1]);
     close(pipefd2[0]);
     close(pipefd2[1]);
     close(pipefd3[1]);
-    exit(0);
-  }
+    close(pipefd3[0]);
 
   if ((waitpid(pid_1, &status, 0)) == -1) {
     fprintf(stderr, "Process 1 encountered an error. ERROR%d", errno);
