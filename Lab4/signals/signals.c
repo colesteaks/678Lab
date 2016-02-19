@@ -31,12 +31,11 @@ void catch_int(int sig_num)
 
     /* prompt the user to tell us if to really
      * exit or not */
+    got_response = 0;
     printf("\nReally exit? [Y/n]: ");
     alarm(10);
     fflush(stdout);
-    if (!fgets(answer, sizeof(answer), stdin)){
-      got_response = 0;
-    } else {
+    if (fgets(answer, sizeof(answer), stdin)){
       got_response = 1;
       if (answer[0] == 'n' || answer[0] == 'N') {
         printf("\nContinuing\n");
@@ -93,7 +92,7 @@ int main(int argc, char* argv[])
 
   while(1) {
     //do something
-    sleep(1);
+    pause();
   }
 
 
