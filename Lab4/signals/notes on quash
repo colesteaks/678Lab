@@ -1,0 +1,12 @@
+notes for project 1
+
+Main
+{
+//big loop, for each round, have to get all of below
+  get user input
+  parse input (validate)
+  fork
+    execl () //refer to the manual for other flavors of exec
+
+
+}
