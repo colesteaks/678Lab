@@ -18,12 +18,13 @@ pthread_mutex_t count_mutex;
  * The routine a new thread will execute is given as an arguent to the
  * pthread_create() call.
  */
-void *inc_count(void *arg) 
+void *inc_count(void *arg)
 {
   int i,loc;
   struct thread_args *my_args = (struct thread_args*) arg;
 
   loc = 0;
+  pthread_mutex_lock(&count_mutex);
   for (i = 0; i < my_args->loop; i++) {
     /*
      * How many machine instructions are required to increment count
@@ -34,6 +35,7 @@ void *inc_count(void *arg)
     count = count +  my_args->inc;
     loc = loc +  my_args->inc;
   }
+  pthread_mutex_unlock(&count_mutex);
   printf("Thread: %d finished. Counted: %d\n", my_args->tid, loc);
   free(my_args);
   pthread_exit(NULL);
@@ -51,7 +53,7 @@ int main(int argc, char *argv[])
     exit(0);
   }
 
-  /* 
+  /*
    * First argument is how many times to loop. The second is how much
    * to increment each time.
    */
@@ -77,16 +79,20 @@ int main(int argc, char *argv[])
     targs->loop = loop;
     targs->inc = inc;
     /* Make call to pthread_create here */
+
+    pthread_create(&threads[i], &attr, inc_count, (void*)targs);
+
   }
 
   /* Wait for all threads to complete using pthread_join.  The threads
    * do not return anything on exit, so the second argument is NULL
-   */ 
+   */
   for (i = 0; i < NUM_THREADS; i++) {
     /* Make call to pthread_join here */
+    pthread_join(threads[i], NULL);
   }
 
-  printf ("Main(): Waited on %d threads. Final value of count = %d. Done.\n", 
+  printf ("Main(): Waited on %d threads. Final value of count = %d. Done.\n",
           NUM_THREADS, count);
 
   /* Clean up and exit */
@@ -95,4 +101,3 @@ int main(int argc, char *argv[])
   pthread_exit (NULL);
 
 }
-
