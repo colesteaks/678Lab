@@ -1,9 +1,9 @@
-STUDENT_ID=XXXXXXX
+STUDENT_ID=2415098
 
 all: producer_consumer
 
 producer_consumer: producer_consumer.c
-	gcc -g -o producer_consumer producer_consumer.c -lpthread -lm 
+	gcc -g -o producer_consumer producer_consumer.c -lpthread -lm
 
 tar: clean
 	make clean

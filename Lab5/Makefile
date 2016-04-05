@@ -1,6 +1,6 @@
 # Defined constants for command base name and arguments for simple test
 #
-STUDENT_ID=XXXXXXX
+STUDENT_ID=2415098
 PTC=ptcount
 LOOP=1000000
 INC=1
