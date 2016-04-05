@@ -29,7 +29,7 @@
 typedef struct {
   int buf[QUEUESIZE];   /* Array for Queue contents, managed as circular queue */
   int head;             /* Index of the queue head */
-  int tail;             /* Index of the queue tail, the next empty slot */  
+  int tail;             /* Index of the queue tail, the next empty slot */
 
   int full;             /* Flag set when queue is full  */
   int empty;            /* Flag set when queue is empty */
@@ -56,11 +56,11 @@ queue *queueInit (void)
    * Initialize the state variables. See the definition of the Queue
    * structure for the definition of each.
    */
-  q->empty = 1;  
-  q->full  = 0;   
+  q->empty = 1;
+  q->full  = 0;
 
-  q->head  = 0;   
-  q->tail  = 0;   
+  q->head  = 0;
+  q->tail  = 0;
 
   /*
    * Allocate and initialize the queue mutex
@@ -91,7 +91,7 @@ void queueDelete (queue *q)
    */
   pthread_mutex_destroy (q->mutex);
   free (q->mutex);
-	
+
   /*
    * Destroy and deallocate the condition variables
    */
@@ -109,7 +109,7 @@ void queueDelete (queue *q)
 
 void queueAdd (queue *q, int in)
 {
-  
+
   /*
    * Put the input item into the free slot
    */
@@ -176,20 +176,20 @@ void queueRemove (queue *q, int *out)
  ******************************************************/
 /*
  * Argument struct used to pass consumers and producers thier
- * arguments.  
- * 
- * q     - arg provides a pointer to the shared queue. 
+ * arguments.
+ *
+ * q     - arg provides a pointer to the shared queue.
  *
  * count - arg is a pointer to a counter for this thread to track how
  *         much work it did.
  *
- * tid   - arg provides the ID number of the producer or consumer, 
+ * tid   - arg provides the ID number of the producer or consumer,
  *         whichis also its index into the array of thread structures.
- * 
+ *
  */
 typedef struct {
-  queue *q;       
-  int   *count;   
+  queue *q;
+  int   *count;
   int    tid;
 } pcdata;
 
@@ -238,7 +238,7 @@ void msleep(unsigned int milli_seconds)
 }
 
 /*
- * Simulate doing work. 
+ * Simulate doing work.
  */
 void do_work(int cpu_iterations, int blocking_time)
 {
@@ -252,7 +252,7 @@ void do_work(int cpu_iterations, int blocking_time)
       local_var = memory_access_area[i];
     }
   }
-  
+
   if ( blocking_time > 0 ) {
     msleep(blocking_time);
   }
@@ -309,7 +309,7 @@ void *producer (void *parg)
     queueAdd (fifo, item_produced);
 
     /*
-     * Announce the production outside the critical section 
+     * Announce the production outside the critical section
      */
     printf("prod %d:  %d.\n", my_tid, item_produced);
 
@@ -342,10 +342,11 @@ void *consumer (void *carg)
      * If the queue is empty, there is nothing to do, so wait until it
      * si not empty.
      */
+     /*
     while (fifo->empty && *total_consumed != WORK_MAX) {
       printf ("con %d:   EMPTY.\n", my_tid);
-    }
-
+    }*/
+    pthread_cond_wait(!fifo->notEmpty);
     /*
      * If total consumption has reached the configured limit, we can
      * stop
@@ -358,7 +359,7 @@ void *consumer (void *carg)
      * Remove the next item from the queue. Increment the count of the
      * total consumed. Note that item_consumed is a local copy so this
      * thread can retain a memory of which item it consumed even if
-     * others are busy consuming them. 
+     * others are busy consuming them.
      */
     queueRemove (fifo, &item_consumed);
     (*total_consumed)++;
@@ -423,15 +424,15 @@ int main (int argc, char *argv[])
    * consumed, shared among all consumers.
    */
   procount = (int *) malloc (sizeof (int));
-  if (procount == NULL) { 
-    fprintf(stderr, "procount allocation failed\n"); 
-    exit(1); 
+  if (procount == NULL) {
+    fprintf(stderr, "procount allocation failed\n");
+    exit(1);
   }
-  
+
   concount = (int *) malloc (sizeof (int));
-  if (concount == NULL) { 
-    fprintf(stderr, "concount allocation failed\n"); 
-    exit(1); 
+  if (concount == NULL) {
+    fprintf(stderr, "concount allocation failed\n");
+    exit(1);
   }
 
   /*
@@ -439,21 +440,21 @@ int main (int argc, char *argv[])
    * consumer
    */
   pro = (pthread_t *) malloc (sizeof (pthread_t) * pros);
-  if (pro == NULL) { 
-    fprintf(stderr, "pros\n"); 
-    exit(1); 
+  if (pro == NULL) {
+    fprintf(stderr, "pros\n");
+    exit(1);
   }
 
   con = (pthread_t *) malloc (sizeof (pthread_t) * cons);
-  if (con == NULL) { 
-    fprintf(stderr, "cons\n"); 
-    exit(1); 
+  if (con == NULL) {
+    fprintf(stderr, "cons\n");
+    exit(1);
   }
 
   /*
    * Create the specified number of producers
    */
-  for (i=0; i<pros; i++){ 
+  for (i=0; i<pros; i++){
     /*
      * Allocate memory for each producer's arguments
      */
@@ -514,4 +515,3 @@ int main (int argc, char *argv[])
 
   return 0;
 }
-
