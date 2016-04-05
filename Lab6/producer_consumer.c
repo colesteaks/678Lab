@@ -350,12 +350,20 @@ void *consumer (void *carg)
      * If the queue is empty, there is nothing to do, so wait until it
      * si not empty.
      */
+<<<<<<< HEAD
      pthread_mutex_lock(fifo->mutex);
     while (fifo->empty && *total_consumed != WORK_MAX) {
       printf ("con %d:   EMPTY.\n", my_tid);
       pthread_cond_wait(fifo->notEmpty, fifo->mutex);
     }
 
+=======
+     /*
+    while (fifo->empty && *total_consumed != WORK_MAX) {
+      printf ("con %d:   EMPTY.\n", my_tid);
+    }*/
+    pthread_cond_wait(!fifo->notEmpty);
+>>>>>>> 02ec577a82d3ce970126352310cad460aad63df6
     /*
      * If total consumption has reached the configured limit, we can
      * stop
