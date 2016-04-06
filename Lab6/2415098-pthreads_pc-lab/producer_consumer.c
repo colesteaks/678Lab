@@ -356,11 +356,6 @@ void *consumer (void *carg)
       pthread_cond_wait(fifo->notEmpty, fifo->mutex);
     }
 
-     /*
-    while (fifo->empty && *total_consumed != WORK_MAX) {
-      printf ("con %d:   EMPTY.\n", my_tid);
-    }*/
-    pthread_cond_wait(!fifo->notEmpty);
     /*
      * If total consumption has reached the configured limit, we can
      * stop
