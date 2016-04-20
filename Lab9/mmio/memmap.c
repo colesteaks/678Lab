@@ -80,11 +80,11 @@ int main (int argc, char *argv[])
   /*
    * 4. mmap the input file
    */
-   dst = mmap(NULL, finf.st_size, PROT_READ, MAP_SHARED, fdin,0);
+   src = mmap(NULL, finf.st_size, PROT_READ, MAP_SHARED, fdin,0);
   /*
    * 5. mmap the output file
    */
-   src = mmap(NULL, finf.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, fdout,0);
+   dst = mmap(NULL, finf.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, fdout,0);
   /*
    * 6. copy the input file to the output file
    */
