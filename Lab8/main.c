@@ -34,8 +34,7 @@ int descending_order (const void* a, const void* b) {
 //parse the process.txt
 void parse_file(char* a) {
   FILE *fp;
-  char buff[255];
-  printf("parse_file");
+  //printf("parse_file");
   fp = fopen(a, "r");
   int pid;
   int at;
@@ -43,22 +42,24 @@ void parse_file(char* a) {
   if(fp){
     int pnum = 0;
     while(fscanf(fp, "%d %d %d", &pid, &at, &pri)!=EOF){
-      //struct process *p1;
-      Processes[pnum].pid = pid;
-      Processes[pnum].arrTime = at;
-      Processes[pnum].priority = pri;
+      process p1;
+      p1.pid = pid;
+      p1.arrTime = at;
+      p1.priority = pri;
+      Processes[pnum] = p1;
       pnum++;
-      printf("%d %d %d", pid, at, pri);
     }
   }
 }
 
 int main(int argc, char **argv) {
   parse_file("process.txt");
+  printf("Process.txt: \n");
   for(int i = 0; i < NUM_PROCS; i++) {
     process p = Processes[i];
     printf("pid: %d\t| arrival time: %d\t| priority: %d\n", p.pid, p.arrTime, p.priority);
   }
+  
   printf("----------------------------------------\n");
   printf("By arrival time: \n");
   int (*ascending)(const void* a, const void* b) = ascending_order;
