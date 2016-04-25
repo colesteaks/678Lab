@@ -259,8 +259,6 @@ int check_for_deadlock()
     /*
      * 5. Use time values to determine if deadlock has occurred.
      */
-    // user_time[i] = new_user_time;
-     // sys_time[i] = new_system_time;
      if(new_sys_time-sys_progress[i] != 0 || new_user_time - user_progress[i] != 0)
      {
          user_time[i] = new_user_time;
@@ -269,6 +267,8 @@ int check_for_deadlock()
          
          sys_progress[i] = new_sys_time - sys_progress[i];
          user_progress[i] = new_user_time - user_progress[i];
+         
+         deadlock = 0;
      }
 
 
