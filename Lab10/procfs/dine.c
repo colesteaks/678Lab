@@ -242,7 +242,7 @@ int check_for_deadlock()
      * also need to determine how many fields to skip over - see proc(5)
      * HINT: Use the the * qualifier to skip tokens without storing them.
      */
-     for(j = 0; j <=FIELDS_TO_IGNORE; j++) {
+     for(j = 0; j <FIELDS_TO_IGNORE; j++) {
         fscanf(statf, "%*s");
      }
 
@@ -259,16 +259,13 @@ int check_for_deadlock()
     /*
      * 5. Use time values to determine if deadlock has occurred.
      */
-     if(new_sys_time-sys_progress[i] != 0 || new_user_time - user_progress[i] != 0)
+     if(new_sys_time-sys_progress[i] > ACTIVE_DURATION || new_user_time - user_progress[i] > ACTIVE_DURATION)
      {
-         sys_progress[i] = new_sys_time - sys_progress[i];
-         user_progress[i] = new_user_time - user_progress[i];
-        
          user_time[i] = new_user_time;
          sys_time[i] = new_sys_time;
-
-         
       
+         sys_progress[i] = new_sys_time - sys_progress[i];
+         user_progress[i] = new_user_time - user_progress[i];
          
          deadlock = 0;
      }
