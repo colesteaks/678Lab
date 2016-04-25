@@ -261,7 +261,15 @@ int check_for_deadlock()
      */
      user_time[i] = new_user_time;
      sys_time[i] = new_system_time;
-     
+     if(new_system_time-sys_progress[i] != 0 || new_user_time - user_progress[i] != 0)
+     {
+         user_time[i] = new_user_time;
+         sys_time[i] = new_system_time;
+
+         
+         sys_progress[i] = new_system_time - sys_progress[i];
+         user_progress[i] = new_user_time - user_progress[i];
+     }
 
 
 
