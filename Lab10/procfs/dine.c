@@ -250,8 +250,8 @@ int check_for_deadlock()
     /*
      * 4. Read the time values you want. Use fscanf again.
      */
-     fscanf(statf, "%u", &new_user_time);
-     fscanf(statf, "%u", &new_sys_time);
+     fscanf(statf, "%lu", &new_user_time);
+     fscanf(statf, "%lu", &new_sys_time);
 
 
 
