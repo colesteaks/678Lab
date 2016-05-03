@@ -1,4 +1,4 @@
-STUDENT_ID=XXXXXXX
+STUDENT_ID=2415098
 
 all:
 	gcc -g client.c -o client -lm
@@ -13,4 +13,3 @@ tar:
 	cp client.c server.c Makefile $(STUDENT_ID)-sockets-lab/
 	tar cvzf $(STUDENT_ID)-sockets-lab.tar.gz $(STUDENT_ID)-sockets-lab
 	rm -rf $(STUDENT_ID)-sockets-lab
-
